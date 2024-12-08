@@ -23,12 +23,17 @@ export const UserContextProvider = ({ children }) => {
     try {
       const { data } = await axios.post(`${server}/api/v1/login`, { email, password });
 
-      toast.success(data.message);
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
-      setIsAuth(true);
-      navigate("/");
-      fetchMycourse();
+      if (data.user) {
+        toast.success(data.message);
+        localStorage.setItem("token", data.token);
+        setUser(data.user);
+        setIsAuth(true);
+        navigate("/");
+        fetchMycourse();
+      } else {
+        // User not found, navigate to registration page
+        navigate("/register");
+      }
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong";
       toast.error(message);
